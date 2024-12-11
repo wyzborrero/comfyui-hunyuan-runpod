@@ -8,22 +8,21 @@ RUN apt-get update -qq && \
     apt-get install -y -qq git git-lfs aria2 ffmpeg python3-pip && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --upgrade pip && \
-    pip3 install uv
-
-# Set up git lfs
+RUN pip3 install --upgrade pip
 RUN git lfs install
 
-# Create workspace directory and go there
+# Create workspace directory
 RUN mkdir -p $ROOT
 WORKDIR $ROOT
 
 # Clone ComfyUI into the desired folder name
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git comfyui-hunyuan-runpod
 
-# Uninstall torch if it’s pre-installed, then install requirements
-RUN uv pip uninstall --yes --system torch torchvision torchaudio
-RUN uv pip install --system -r $ROOT/comfyui-hunyuan-runpod/requirements.txt
+# Remove torch if pre-installed (ignore errors with || true)
+RUN pip3 uninstall --yes torch torchvision torchaudio || true
+
+# Install ComfyUI requirements
+RUN pip3 install -r $ROOT/comfyui-hunyuan-runpod/requirements.txt
 
 # Add custom nodes
 WORKDIR $ROOT/comfyui-hunyuan-runpod/custom_nodes
@@ -32,10 +31,10 @@ RUN git clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite
 
 # Install requirements for HunyuanVideoWrapper
 WORKDIR $ROOT/comfyui-hunyuan-runpod/custom_nodes/ComfyUI-HunyuanVideoWrapper
-RUN uv pip install --system -r requirements.txt
-RUN uv pip install --system sageattention
+RUN pip3 install -r requirements.txt
+RUN pip3 install sageattention
 
-# Download models
+# Download models directories
 RUN mkdir -p $ROOT/comfyui-hunyuan-runpod/models/clip \
              $ROOT/comfyui-hunyuan-runpod/models/unet \
              $ROOT/comfyui-hunyuan-runpod/models/vae
@@ -57,7 +56,7 @@ RUN aria2c --console-log-level=error -c -x 16 -s 16 -k 1M \
 
 # Install VideoHelperSuite requirements
 WORKDIR $ROOT/comfyui-hunyuan-runpod/custom_nodes
-RUN uv pip install --system -r $ROOT/comfyui-hunyuan-runpod/custom_nodes/ComfyUI-VideoHelperSuite/requirements.txt
+RUN pip3 install -r $ROOT/comfyui-hunyuan-runpod/custom_nodes/ComfyUI-VideoHelperSuite/requirements.txt
 
 EXPOSE 8188
 WORKDIR $ROOT/comfyui-hunyuan-runpod
