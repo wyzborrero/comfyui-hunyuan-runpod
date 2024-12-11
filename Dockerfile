@@ -8,7 +8,7 @@ RUN apt-get update -qq && \
     apt-get install -y -qq git git-lfs aria2 ffmpeg python3-pip && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --upgrade pip
+RUN pip3 install --upgrade pip setuptools wheel
 RUN git lfs install
 
 # Create workspace directory
@@ -18,13 +18,16 @@ WORKDIR $ROOT
 # Clone ComfyUI into the desired folder name
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git comfyui-hunyuan-runpod
 
-# Uninstall torch if pre-installed (ignore errors)
+# Remove torch if pre-installed (ignore errors)
 RUN pip3 uninstall --yes torch torchvision torchaudio || true
 
-# Install a GPU-supported PyTorch version compatible with CUDA 11.8
-# Adjust versions if needed, but these should work with CUDA 11.8
+# Option 1: Install the latest stable versions without pinning:
+# RUN pip3 install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cu118 \
+#     torch torchvision torchaudio
+
+# Option 2: Use pinned versions with +cu118:
 RUN pip3 install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cu118 \
-    torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2
+    torch==2.0.1+cu118 torchvision==0.15.2+cu118 torchaudio==2.0.2+cu118
 
 # Now install the rest of ComfyUI requirements
 RUN pip3 install --no-cache-dir -r $ROOT/comfyui-hunyuan-runpod/requirements.txt
