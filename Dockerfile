@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.0.1-cuda11.8-cudnn8-runtime
+FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ROOT=/workspace
@@ -14,7 +14,7 @@ WORKDIR $ROOT
 # Clone ComfyUI into the desired folder name
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git comfyui-hunyuan-runpod
 
-# Install ComfyUI requirements (PyTorch is already included)
+# Upgrade pip and install ComfyUI requirements
 RUN pip3 install --upgrade pip
 RUN pip3 install -r $ROOT/comfyui-hunyuan-runpod/requirements.txt
 
@@ -28,7 +28,7 @@ WORKDIR $ROOT/comfyui-hunyuan-runpod/custom_nodes/ComfyUI-HunyuanVideoWrapper
 RUN pip3 install -r requirements.txt
 RUN pip3 install sageattention
 
-# Download models
+# Create model directories
 RUN mkdir -p $ROOT/comfyui-hunyuan-runpod/models/clip \
              $ROOT/comfyui-hunyuan-runpod/models/unet \
              $ROOT/comfyui-hunyuan-runpod/models/vae
