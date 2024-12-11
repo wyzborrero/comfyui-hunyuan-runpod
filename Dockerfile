@@ -22,12 +22,12 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git comfyui-hunyuan-runp
 RUN pip3 uninstall --yes torch torchvision torchaudio || true
 
 # Option 1: Install the latest stable versions without pinning:
-# RUN pip3 install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cu118 \
-#     torch torchvision torchaudio
+RUN pip3 install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cu118 \
+    torch torchvision torchaudio
 
 # Option 2: Use pinned versions with +cu118:
-RUN pip3 install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cu118 \
-    torch==2.0.1+cu118 torchvision==0.15.2+cu118 torchaudio==2.0.2+cu118
+#RUN pip3 install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cu118 \
+#    torch==2.0.1+cu118 torchvision==0.15.2+cu118 torchaudio==2.0.2+cu118
 
 # Now install the rest of ComfyUI requirements
 RUN pip3 install --no-cache-dir -r $ROOT/comfyui-hunyuan-runpod/requirements.txt
