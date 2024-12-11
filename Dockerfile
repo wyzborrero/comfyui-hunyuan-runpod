@@ -18,11 +18,16 @@ WORKDIR $ROOT
 # Clone ComfyUI into the desired folder name
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git comfyui-hunyuan-runpod
 
-# Remove torch if pre-installed (ignore errors with || true)
+# Uninstall torch if pre-installed (ignore errors)
 RUN pip3 uninstall --yes torch torchvision torchaudio || true
 
-# Install ComfyUI requirements
-RUN pip3 install -r $ROOT/comfyui-hunyuan-runpod/requirements.txt
+# Install a GPU-supported PyTorch version compatible with CUDA 11.8
+# Adjust versions if needed, but these should work with CUDA 11.8
+RUN pip3 install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cu118 \
+    torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2
+
+# Now install the rest of ComfyUI requirements
+RUN pip3 install --no-cache-dir -r $ROOT/comfyui-hunyuan-runpod/requirements.txt
 
 # Add custom nodes
 WORKDIR $ROOT/comfyui-hunyuan-runpod/custom_nodes
@@ -31,10 +36,10 @@ RUN git clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite
 
 # Install requirements for HunyuanVideoWrapper
 WORKDIR $ROOT/comfyui-hunyuan-runpod/custom_nodes/ComfyUI-HunyuanVideoWrapper
-RUN pip3 install -r requirements.txt
-RUN pip3 install sageattention
+RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir sageattention
 
-# Download models directories
+# Download models
 RUN mkdir -p $ROOT/comfyui-hunyuan-runpod/models/clip \
              $ROOT/comfyui-hunyuan-runpod/models/unet \
              $ROOT/comfyui-hunyuan-runpod/models/vae
@@ -56,7 +61,7 @@ RUN aria2c --console-log-level=error -c -x 16 -s 16 -k 1M \
 
 # Install VideoHelperSuite requirements
 WORKDIR $ROOT/comfyui-hunyuan-runpod/custom_nodes
-RUN pip3 install -r $ROOT/comfyui-hunyuan-runpod/custom_nodes/ComfyUI-VideoHelperSuite/requirements.txt
+RUN pip3 install --no-cache-dir -r $ROOT/comfyui-hunyuan-runpod/custom_nodes/ComfyUI-VideoHelperSuite/requirements.txt
 
 EXPOSE 8188
 WORKDIR $ROOT/comfyui-hunyuan-runpod
