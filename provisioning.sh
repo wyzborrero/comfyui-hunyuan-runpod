@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEFAULT_WORKFLOW="https://raw.githubusercontent.com/ai-dock/comfyui/main/config/workflows/flux-comfyui-example.json"
+DEFAULT_WORKFLOW="https://github.com/kijai/ComfyUI-HunyuanVideoWrapper/blob/main/examples/hyvideo_t2v_example_01.json"
 
 APT_PACKAGES=(
     "git-lfs"   # ensure git lfs is installed
@@ -9,6 +9,7 @@ APT_PACKAGES=(
 )
 
 PIP_PACKAGES=(
+    "sageattention"
     # Add any custom python packages you might need
 )
 
